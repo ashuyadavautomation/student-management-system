@@ -1,0 +1,489 @@
+import json 
+
+class Student:
+    def __init__(self, student_id, name, age, city, hindi, english, math):
+        
+        self.student_id = student_id
+        self.name = name
+        self.age = age
+        self.city = city
+        self.hindi = hindi
+        self.english = english
+        self.math = math
+        
+    def total_marks(self):
+    	return self.hindi + self.english + self.math
+    	
+    def average_marks(self):
+    	return round(self.total_marks() /
+    	3, 2)
+    	
+    
+    def grade (self):
+    	average = self.average_marks()
+    	
+    	if average >= 90:
+    		return 'A+'
+    		
+    	elif average >= 80:
+    		return 'A'
+    		
+    	elif average >= 70:
+    		return 'B'
+    		
+    	elif average >= 60:
+    		return 'C'
+    		
+    	elif average >= 50:
+    		return 'D'
+    		
+    	else:
+    		return 'Fail'
+    		
+    def result(self):
+    	if self.hindi >= 33 and self.english >= 33 and self.math >= 33:
+    		
+    		return 'PASS'
+    		
+    	else:
+    			return 'FAIL'
+    			
+    def highest_subject(self):
+           marks = {
+    	          'Hindi': self.hindi,
+                  'English': self.english,
+                  'Math': self.math
+    }
+    
+
+           return max(marks, key=marks.get)
+           
+    def lowest_subject(self):
+           marks = {
+                     'Hindi': self.hindi,
+                     'English': self.english,
+                     'Math': self.math
+           }
+
+           return min(marks, key=marks.get)
+           
+    def show_rank(self, rank):
+           print('Rank:', rank)
+           print('Name:', self.name)
+           print('Total Marks:', self.total_marks())
+           print('Average:', self.average_marks())
+           print('Grade:', self.grade())
+           print('Result:', self.result())
+           
+       
+    def show_info(self):
+        print('Name:', self.name)
+        print('Age:', self.age)
+        print('City:', self.city)
+        print('Hindi:', self.hindi)
+        print('English:', self.english)
+        print('Math:', self.math)
+        print('Total:', self.total_marks())
+        print('Average:', self.average_marks())
+        print('Grade:', self.grade())
+        print('Result:', self.result())
+        print('Highest Marks subject:', self.highest_subject())
+        print('Lowest Marks Subject:', self.lowest_subject())
+        print('Student ID:', self.student_id)
+
+
+students = []
+
+def save_students():
+       
+       data = []
+       
+       for student in students:
+             data.append({
+       	         'student_id': student.student_id,
+       	         'name': student.name,
+       	         'age': student.age,
+       	         'city': student.city,
+       	         'hindi': student.hindi,
+       	         'english': student.english,
+       	         'math': student.math
+       	         
+       	})
+       with open('students.json', 'w') as file:
+       	json.dump(data, file, indent = 4)
+       	
+       	print('json file saved successfully!')
+      
+def load_students():
+    try:
+        with open('students.json', 'r') as file:
+            data = json.load(file)
+
+        for item in data:
+            student = Student(
+                item['student_id'],
+                item['name'],
+                item['age'],
+                item['city'],
+                item['hindi'],
+                item['english'],
+                item['math']
+            )
+
+            students.append(student)
+
+    except FileNotFoundError:
+        pass
+    
+    except json.JSONDecodeError:
+        print('students.json file is corrupted!')
+        
+load_students()
+
+def backup_students():
+	try:
+		with open('students.json', 'r') as file:
+			data = json.load(file)
+			
+		with open('students_backup.json', 'w') as backup_file:
+			json.dump(data, backup_file, indent = 4)
+		print('Backup created successfully! ')
+		
+	except FileNotFoundError:
+			print('students.json file not found!')
+	
+	except json.JSONDecodeError:
+			print('Backup file is corrupted!')
+			
+def restore_backup():
+    try:
+        with open('students_backup.json', 'r') as backup_file:
+            data = json.load(backup_file)
+
+        with open('students.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+        # Memory wali students list ko bhi update karo
+        students.clear()
+
+        for item in data:
+            student = Student(
+                item['student_id'],
+                item['name'],
+                item['age'],
+                item['city'],
+                item['hindi'],
+                item['english'],
+                item['math']
+            )
+
+            students.append(student)
+
+        print('Backup restored successfully!')
+
+    except FileNotFoundError:
+        print('Backup file not found!')
+    
+    except json.JSONDecodeError:
+    	print('Backup file is corrupted')			
+while True:
+
+    print('\n===== STUDENT MANAGEMENT SYSTEM =====')
+    print('1. Add Student')
+    print('2. Show Students')
+    print('3. Search Student')
+    print('4. Update Student')
+    print('5. Delete Student')
+    print('6. Student Ranking')
+    print('7. Top Student')
+    print('8. Top 3 Students')
+    print('9. Exit')
+    print('10. Backup Students')
+    print('11. Restore Backup')
+    
+    
+
+    choice = input('Enter your choice: ')
+
+
+    # 1. Add Student
+    if choice == '1':
+
+        name = input('Enter student name: ')
+        
+        try:
+        	age = int(input('Enter student age: '))
+        	
+        	if age <= 0:
+        		raise ValueError('age must be greater than 0!')
+        		
+        except ValueError:
+        		print('Invalid age! Please enter a positive number.')
+        		continue
+        city = input('Enter student city: ')
+
+        
+        
+ 
+        try:
+        	hindi = int(input('Enter Hindi marks: '))
+        	if hindi <0 or hindi > 100:
+        		raise ValueError
+        
+        except ValueError:
+        		print('Invalid Hindi marks! Marks must be between 0 and 100.')
+        		continue
+        		
+        try:
+        	english = int(input('Enter English marks: '))
+        	
+        	if english <0 or english >100:
+        		raise ValueError
+        		
+        except ValueError:
+        	print('Invalid English marks! Marks must be between 0 and 100.')
+        	continue
+        
+   
+        try:
+        	math = int(input('Enter Math marks: '))
+        	
+        	if math <0 or math >100:
+        		raise ValueError
+        		
+        except ValueError:
+        	print('Invalid Math marks! Marks must be between 0 and 100.')
+        	continue
+        
+        
+        if len(students) == 0:
+        	student_id = 1
+        
+        else:
+        	student_id = max(
+        	student.student_id for student in students) + 1     
+        
+        new_student = Student(
+            student_id,
+            name,
+            age,
+            city,
+            hindi,
+            english,
+            math
+        )
+
+        students.append(new_student)
+        
+        save_students()
+
+        print('Student added successfully!')
+
+
+    # 2. Show Students
+    elif choice == '2':
+
+        if len(students) == 0:
+            print('No students found')
+
+        else:
+            print('\n===== ALL STUDENTS =====')
+
+            for student in students:
+                student.show_info()
+
+
+    # 3. Search Student
+    elif choice == '3':
+
+        try:
+        	search_id = int(input('Enter student ID to search: '))
+        	
+        except ValueError:
+        		print('Invalid student ID! Please enter a number.')
+        		continue
+
+        found = False
+        
+        for student in students:
+        	
+        	if student.student_id == search_id:
+        	   	
+        	   	print('\n ===== STUDENT FOUND =====')
+        	   	student.show_info()
+        	   	found = True
+        	   	break
+        if not found:
+              print('Student not found')
+          
+     # 4. Update Student City
+    elif choice == '4':
+
+        update_name = input('Enter student name to update: ')
+
+        found = False
+        invailid_update = False
+
+        for student in students:
+
+            if student.name.lower() == update_name.lower():
+
+                new_city = input('Enter new city name: ')
+               
+                try:
+                	new_hindi = int(input('Enter new Hindi marks: '))
+                	
+                	if new_hindi < 0 or new_hindi > 100:
+                		raise ValueError
+                except ValueError:
+                	print('Invalid Hindi marks! Marks must be between 0 and 100.')
+                	invailid_update = True
+                	break
+                
+                try:
+                	new_english = int(input('Enter new English marks: '))
+                	if new_english < 0 or new_english > 100:
+                		raise ValueError
+                
+                except ValueError:
+                	print('Invalid English marks! Marks must be between 0 and 100.')
+                	invailid_update = True
+                	break
+                
+                try:
+                	 new_math = int(input('Enter new Math marks: '))
+                	 if new_math < 0 or new_math > 100:
+                	 	raise ValueError
+                except ValueError:
+                		print('Invalid Math marks! Marks must be between 0 and 100.')
+                		invailid_update = True
+                		break
+                
+                try:
+                	new_age = int(input('Enter new Age: '))
+                	if new_age <= 0:
+                		raise ValueError
+                
+                except ValueError:
+                	print('Invalid age! Age must be greater than 0.')
+                	invailid_update = True
+                	break
+
+                student.city = new_city
+                student.hindi = new_hindi
+                student.english = new_english
+                student.math = new_math
+                student.age = new_age
+
+                found = True
+                save_students()
+
+                print('Student updated successfully!')
+
+                break
+
+        if invailid_update:
+            continue
+
+        if not found:
+            print('Student not found')
+            
+    # 5. Delete Student
+    elif choice == '5':
+
+        try:
+        	delete_name = input('Enter student name to delete: ')
+        	if delete_name.strip() == "":
+        		raise ValueError
+        		
+        except ValueError:
+        	print('Invalid name! Student name cannot be empty.')
+        	continue
+        	
+
+        found = False
+
+        for student in students:
+
+            if student.name.lower() == delete_name.lower():
+
+                students.remove(student)
+
+                found = True
+                save_students()
+
+                print('Student deleted successfully!')
+
+                break
+
+        if not found:
+            print('Student not found')
+            
+    elif choice == '6':
+        
+        if len(students) == 0:
+        	print('No student found')
+        	
+        else:
+        	print('\n===== STUDENT RANKING =====')
+        	sorted_students = sorted(
+            students,
+            
+            key=lambda student: student.total_marks(),
+            reverse=True
+        )
+        
+        for rank, student in enumerate(sorted_students, start=1):
+            student.show_rank(rank)
+            
+    elif choice == '7':
+            
+            if len(students) == 0:
+            	print('No student found')
+            	
+            else:
+                    top_student = max(
+                             students,
+                             key =lambda student:
+    student.total_marks()
+                    )
+                    
+                    print('\n===== TOP STUDENT =====')
+                    top_student.show_rank(1)
+ 
+ 
+    # 8. Top 3 Students
+
+    elif choice == '8':
+        
+        if len(students) == 0:
+            print('No student found')
+            
+        else:
+            print('\n===== TOP 3 STUDENTS =====')
+            
+            sorted_students = sorted(
+                students,
+                key=lambda student: student.total_marks(),
+                reverse=True
+            )
+
+            top_students = sorted_students[:3]
+
+            for rank, student in enumerate(top_students, start=1):
+                student.show_rank(rank)
+               
+    elif choice == '9':
+        print('Program finished!')
+        break
+        
+    elif choice == '10':
+        backup_students()
+        
+    elif choice == '11':
+        restore_backup()
+            
+    else:
+
+        print('Invalid choice!')
+        
